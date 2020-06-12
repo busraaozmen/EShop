@@ -15,4 +15,22 @@ UI layer types
 * Views
 * ViewModels
 * Startup
-https://docs.microsoft.com/en-us/dotnet/architecture/modern-web-apps-azure/common-web-application-architectures
+
+== Packages ==
+Application Core
+
+Infrastructure
+Install-Package Microsoft.EntityFrameworkCore.Tools
+Install-Package Microsoft.EntityFrameworkCore.SqlServer
+Install-Package Microsoft.AspNetCore.Identity
+Install-Package Microsoft.AspNetCore.Identity.EntityFrameworkCore
+
+Add-Migration InitialIdentityModel -context AppIdentityDbContext -OutputDir "Identity/Migrations"
+Update-Database -context AppIdentityDbContext
+
+Add-Migration Initial -context ShopContext -OutputDir "Data/Migrations"
+
+Remove-Migration Initial -context ShopContext 
+Update-Database -context ShopContext
+
+UI layer
