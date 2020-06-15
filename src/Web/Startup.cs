@@ -15,6 +15,8 @@ using Infrastructure.Identity;
 using Infrastructure.Data;
 using ApplicationCore.Interfaces;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Web.Interfaces.Services;
+using Web.Services;
 
 namespace Web
 {
@@ -44,6 +46,8 @@ namespace Web
                    .AddDefaultTokenProviders();
 
             services.AddScoped(typeof(IAsyncRepository<>), typeof(EfRepository<>));
+            services.AddScoped<IHomeIndexViewModelService, HomeIndexViewModelService>();
+
 
             services.AddControllersWithViews();
             services.AddRazorPages();
