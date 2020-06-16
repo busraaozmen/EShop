@@ -1,5 +1,6 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
+using ApplicationCore.Specifications;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
@@ -48,7 +49,7 @@ namespace Web.Services
                 .OrderBy(x => x.Text)
                 .ToList();
 
-            var allItem = new SelectListItem() { Value = null, Text = "All", Selected = true };
+            var allItem = new SelectListItem() { Value = null, Text = "All" };
             items.Insert(0, allItem);
 
             return items;
@@ -60,7 +61,7 @@ namespace Web.Services
             {
                 Categories = await GetCategories(),
                 Brands = await GetBrands(),
-                Products = await _productRepository.ListAllAsync(),
+                Products = await _productRepository.ListAsync(new ProductsFilterSpecification(categoryId, brandId)),
                 CategoryId = categoryId,
                 BrandId = brandId
             };
