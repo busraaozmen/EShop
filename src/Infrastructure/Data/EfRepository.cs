@@ -19,12 +19,39 @@ namespace Infrastructure.Data
         {
             _dbContext = dbContext;
         }
+
+        public async Task<T> AddAsync(T entity)
+        {
+            _dbContext.Add(entity);
+            await _dbContext.SaveChangesAsync();
+            return entity;
+        }
+
         public async Task<int> CountAsync(ISpecification<T> specification)
         {
             return await (await ApplySpecification(specification)).CountAsync();
         }
 
+        public async Task DeleteAsync(T entity)
+        {
+            _dbContext.Remove(entity);
+            await _dbContext.SaveChangesAsync();
+        }
 
+        public async Task<T> FirstAsync(ISpecification<T> specification)
+        {
+            return await (await ApplySpecification(specification)).FirstAsync();
+        }
+
+        public async Task<T> FirstOrDefaultAsync(ISpecification<T> specification)
+        {
+            return await (await ApplySpecification(specification)).FirstOrDefaultAsync();
+        }
+
+        public  async Task<T> GetByIAsync(int id)
+        {
+            return await _dbContext.FindAsync<T>(id);
+        }
 
         public async Task<IReadOnlyList<T>> ListAllAsync()
         {
@@ -36,11 +63,17 @@ namespace Infrastructure.Data
             return await (await ApplySpecification(specification)).ToListAsync();
         }
 
+        public async Task UpdateAsync(T entity)
+        {
+            _dbContext.Update(entity);
+            await _dbContext.SaveChangesAsync();
+        }
+
         private async Task<IQueryable<T>> ApplySpecification(ISpecification<T> specification)
         {
             return await EfSpecificationEvaluator<T>.GetQuery(_dbContext.Set<T>().AsQueryable(), specification);
         }
 
-        
+
     }
 }
