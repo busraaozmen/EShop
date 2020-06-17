@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Web.Interfaces;
 using Web.Interfaces.Services;
@@ -55,15 +56,40 @@ namespace Web.Services
             return items;
         }
 
-        public async Task<HomeIndexViewModel> GetHomeIndexViewModel(int? categoryId, int? brandId)
+        public async Task<HomeIndexViewModel> GetHomeIndexViewModel(int pageIndex, int itemsPerPage, int? categoryId, int? brandId)
         {
+            int totalItems = await _productRepository.CountAsync(new ProductsFilterSpecification(categoryId, brandId));
+            var products = await _productRepository.ListAsync(
+                new ProductsFilterPaginationSpecification(
+                    (pageIndex - 1) * itemsPerPage,
+                    itemsPerPage,
+                    categoryId,
+                    brandId)
+                );
+
+
             var vm = new HomeIndexViewModel
             {
                 Categories = await GetCategories(),
                 Brands = await GetBrands(),
-                Products = await _productRepository.ListAsync(new ProductsFilterSpecification(categoryId, brandId)),
+                Products = products
+                    .Select(x => new ProductViewModel()
+                    {
+                        Id = x.Id,
+                        ProductName = x.ProductName,
+                        Description = x.Description,
+                        UnitPrice = x.UnitPrice,
+                        PhotoPath = string.IsNullOrEmpty(x.PhotoPath) ? "no-product-image.png" : x.PhotoPath
+                    }).ToList(),
                 CategoryId = categoryId,
-                BrandId = brandId
+                BrandId = brandId,
+                PaginationInfo = new PaginationInfoViewModel()
+                {
+                    TotalItems =totalItems,
+                    TotalPages = (int)Math.Ceiling((decimal)totalItems /  itemsPerPage ),
+                    ActualPage = pageIndex,
+                    ItemsOnPage = products.Count
+                }
             };
 
             return vm;
