@@ -30,7 +30,6 @@ Add-Migration InitialIdentityModel -context AppIdentityDbContext -OutputDir "Ide
 Update-Database -context AppIdentityDbContext
 
 Add-Migration Initial -context ShopContext -OutputDir "Data/Migrations"
-
 Remove-Migration Initial -context ShopContext 
 Update-Database -context ShopContext
 
