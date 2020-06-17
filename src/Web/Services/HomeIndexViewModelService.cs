@@ -60,7 +60,7 @@ namespace Web.Services
         {
             int totalItems = await _productRepository.CountAsync(new ProductsFilterSpecification(categoryId, brandId));
             var products = await _productRepository.ListAsync(
-                new ProductsFilterPaginationSpecification(
+                new ProductsFilterPaginatedSpecification(
                     (pageIndex - 1) * itemsPerPage,
                     itemsPerPage,
                     categoryId,
@@ -85,12 +85,15 @@ namespace Web.Services
                 BrandId = brandId,
                 PaginationInfo = new PaginationInfoViewModel()
                 {
-                    TotalItems =totalItems,
-                    TotalPages = (int)Math.Ceiling((decimal)totalItems /  itemsPerPage ),
-                    ActualPage = pageIndex,
+                    TotalItems = totalItems,
+                    TotalPages = (int)Math.Ceiling((decimal)totalItems / itemsPerPage),
+                    ActualPage = totalItems == 0 ? 0 : pageIndex,
                     ItemsOnPage = products.Count
+
                 }
             };
+            vm.PaginationInfo.Previous = vm.PaginationInfo.ActualPage <= 1 ? "disabled" : "";
+            vm.PaginationInfo.Next = vm.PaginationInfo.ActualPage >= vm.PaginationInfo.TotalPages  ? "disabled" : "";
 
             return vm;
         }

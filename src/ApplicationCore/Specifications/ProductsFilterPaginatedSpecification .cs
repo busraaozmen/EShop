@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace ApplicationCore.Specifications
 {
-    public class ProductsFilterPaginationSpecification : BaseSpecification<Product>
+    public class ProductsFilterPaginatedSpecification : BaseSpecification<Product>
     {
-        public ProductsFilterPaginationSpecification(int skip, int take, int? categoryId, int? brandId)
+        public ProductsFilterPaginatedSpecification(int skip, int take, int? categoryId, int? brandId)
         {
             AddCriteria(x => (!categoryId.HasValue || x.CategoryId == categoryId) && (!brandId.HasValue || x.BrandId == brandId));
             ApplyPaging(skip, take);
